@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在平时的开发中经常需要阅读学习其他人的代码，当开始阅读一份自己完全不熟悉的代码时，通常会遇到一些麻烦，因为我必须要先找到代码逻辑的入口点并沿着逻辑链路将其梳理一遍，一份代码文件通常会伴随着许多的方法调用，这一个阶段往往是比较痛苦的，因为我必须花上许多时间来将这些方法之间的关系理清楚，这样才能在我的大脑中生成一份逻辑关系图。如果我们能自动生成源码中的方法调用图(Call Graph)，那样一定会对源">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在iOS项目中自动生成函数调用关系图">
+<meta property="og:url" content="http://yoursite.com/2017/12/13/在iOS项目中自动生成函数调用关系图/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="在平时的开发中经常需要阅读学习其他人的代码，当开始阅读一份自己完全不熟悉的代码时，通常会遇到一些麻烦，因为我必须要先找到代码逻辑的入口点并沿着逻辑链路将其梳理一遍，一份代码文件通常会伴随着许多的方法调用，这一个阶段往往是比较痛苦的，因为我必须花上许多时间来将这些方法之间的关系理清楚，这样才能在我的大脑中生成一份逻辑关系图。如果我们能自动生成源码中的方法调用图(Call Graph)，那样一定会对源">
+<meta property="og:image" content="http://yoursite.com/images/4.png">
+<meta property="og:image" content="http://yoursite.com/images/5.png">
+<meta property="og:updated_time" content="2017-12-13T10:41:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在iOS项目中自动生成函数调用关系图">
+<meta name="twitter:description" content="在平时的开发中经常需要阅读学习其他人的代码，当开始阅读一份自己完全不熟悉的代码时，通常会遇到一些麻烦，因为我必须要先找到代码逻辑的入口点并沿着逻辑链路将其梳理一遍，一份代码文件通常会伴随着许多的方法调用，这一个阶段往往是比较痛苦的，因为我必须花上许多时间来将这些方法之间的关系理清楚，这样才能在我的大脑中生成一份逻辑关系图。如果我们能自动生成源码中的方法调用图(Call Graph)，那样一定会对源">
+<meta name="twitter:image" content="http://yoursite.com/images/4.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/13/在iOS项目中自动生成函数调用关系图/"/>
+
+
+
+
+
+  <title>在iOS项目中自动生成函数调用关系图 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/13/在iOS项目中自动生成函数调用关系图/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">在iOS项目中自动生成函数调用关系图</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-13T17:35:13+08:00">
+                2017-12-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在平时的开发中经常需要阅读学习其他人的代码，当开始阅读一份自己完全不熟悉的代码时，通常会遇到一些麻烦，因为我必须要先找到代码逻辑的入口点并沿着逻辑链路将其梳理一遍，一份代码文件通常会伴随着许多的方法调用，这一个阶段往往是比较痛苦的，因为我必须花上许多时间来将这些方法之间的关系理清楚，这样才能在我的大脑中生成一份逻辑关系图。如果我们能自动生成源码中的方法调用图(Call Graph)，那样一定会对源码阅读有很大的帮助。  </p>
+<p>我们需要一个能够自动生成源码方法调用图的工具，那么这个工具必须能够理解并分析我们的代码，而最能理解代码的当然就是编译器了。我们编译Objective-C的代码所用的前端是Clang，Clang提供了一系列的工具来帮助我们分析源码，我们可以基于Clang来构建自己的工具。在这之前简单介绍一些相关概念：</p>
+<h3 id="抽象语法树"><a href="#抽象语法树" class="headerlink" title="抽象语法树"></a>抽象语法树</h3><p>抽象语法树（Abstract Syntax Code, AST）是源代码语法结构的树状表示，其中的每一个节点都表示一个源码中的结构，AST在编译中扮演了一个十分重要的角色，Clang分析输入的源码并生成AST，之后根据AST生成LLVM IR(中间码)。  </p>
+<p>我们可以使用Clang提供的工具<code>clang-check</code>来查看AST，创建一个代码文件test.c<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">square</span><span class="params">(<span class="keyword">int</span> num)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> num * num;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> result = square(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在终端执行命令<code>clang-check -ast-dump test.m</code>，可以看到转换后的AST结构：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">|-FunctionDecl 0x7fa933840e00 &lt;/Users/lzephyr/Desktop/test.c:1:1, line:3:1&gt; line:1:5 used square &apos;int (int)&apos;</span><br><span class="line">| |-ParmVarDecl 0x7fa93302f720 &lt;col:12, col:16&gt; col:16 used num &apos;int&apos;</span><br><span class="line">| `-CompoundStmt 0x7fa933840fa0 &lt;col:21, line:3:1&gt;</span><br><span class="line">|   `-ReturnStmt 0x7fa933840f88 &lt;line:2:2, col:15&gt;</span><br><span class="line">|     `-BinaryOperator 0x7fa933840f60 &lt;col:9, col:15&gt; &apos;int&apos; &apos;*&apos;</span><br><span class="line">|       |-ImplicitCastExpr 0x7fa933840f30 &lt;col:9&gt; &apos;int&apos; &lt;LValueToRValue&gt;</span><br><span class="line">|       | `-DeclRefExpr 0x7fa933840ee0 &lt;col:9&gt; &apos;int&apos; lvalue ParmVar 0x7fa93302f720 &apos;num&apos; &apos;int&apos;</span><br><span class="line">|       `-ImplicitCastExpr 0x7fa933840f48 &lt;col:15&gt; &apos;int&apos; &lt;LValueToRValue&gt;</span><br><span class="line">|         `-DeclRefExpr 0x7fa933840f08 &lt;col:15&gt; &apos;int&apos; lvalue ParmVar 0x7fa93302f720 &apos;num&apos; &apos;int&apos;</span><br><span class="line">`-FunctionDecl 0x7fa933841010 &lt;line:5:1, line:7:1&gt; line:5:5 main &apos;int ()&apos;</span><br><span class="line">  `-CompoundStmt 0x7fa9338411f8 &lt;col:12, line:7:1&gt;</span><br><span class="line">    `-DeclStmt 0x7fa9338411e0 &lt;line:6:2, col:24&gt;</span><br><span class="line">      `-VarDecl 0x7fa9338410c0 &lt;col:2, col:23&gt; col:6 result &apos;int&apos; cinit</span><br><span class="line">        `-CallExpr 0x7fa9338411b0 &lt;col:15, col:23&gt; &apos;int&apos;</span><br><span class="line">          |-ImplicitCastExpr 0x7fa933841198 &lt;col:15&gt; &apos;int (*)(int)&apos; &lt;FunctionToPointerDecay&gt;</span><br><span class="line">          | `-DeclRefExpr 0x7fa933841120 &lt;col:15&gt; &apos;int (int)&apos; Function 0x7fa933840e00 &apos;square&apos; &apos;int (int)&apos;</span><br><span class="line">          `-IntegerLiteral 0x7fa933841148 &lt;col:22&gt; &apos;int&apos; 2</span><br></pre></td></tr></table></figure></p>
+<h3 id="LibTooling和Clang-Plugin"><a href="#LibTooling和Clang-Plugin" class="headerlink" title="LibTooling和Clang Plugin"></a>LibTooling和Clang Plugin</h3><p><code>LibTooling</code>是一个库，提供了对AST的访问和修改的能力，<code>LibTooling</code>可以用来编写可独立运行的程序，如我们上面所使用的<code>clang-check</code>，<code>LibTooling</code>提供了一系列便捷的方法来访问语法树。  </p>
+<p><code>Clang Plugin</code>与<code>LibTooling</code>类似，对AST有完全的控制权，但是不同的是<code>Clang Plugin</code>是作为插件注入到编译流程中的，并且可以嵌入xCode中。实际上使用<code>LibTooling</code>编写的独立工具只需要经过少许的改动就可以变成<code>Clang Plugin</code>来使用。</p>
+<h2 id="访问抽象语法树"><a href="#访问抽象语法树" class="headerlink" title="访问抽象语法树"></a>访问抽象语法树</h2><p>要获得函数之间的调用关系，我们必须分析AST，Clang提供了两种方法：<code>ASTMatchers</code>和<code>RecursiveASTVisitor</code>。</p>
+<h3 id="ASTMatchers"><a href="#ASTMatchers" class="headerlink" title="ASTMatchers"></a>ASTMatchers</h3><p><code>ASTMatchers</code>提供了一系列的函数，以DSL的方式编写匹配表达式来查找我们感兴趣的节点，并使用<code>bind</code>方法绑定到指定的名称上：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">StatementMatcher matcher = callExpr(hasAncestor(functionDecl().bind(<span class="string">"caller"</span>)), </span><br><span class="line">                                    callee(functionDecl().bind(<span class="string">"callee"</span>)));</span><br></pre></td></tr></table></figure></p>
+<p>上面的表达式匹配了源码中普通C函数的调用，并将调用者绑定到字符串”caller”，被调用者绑定到字符串”callee”，随后在回调方法中可以通过名称caller和callee来获取<code>FunctionDecl</code>类型的对象：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FindFuncCall</span> :</span> <span class="keyword">public</span> MatchFinder::MatchCallback &#123;</span><br><span class="line"><span class="keyword">public</span> :</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(<span class="keyword">const</span> MatchFinder::MatchResult &amp;Result)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 获取调用者的函数定义</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">const</span> FunctionDecl *caller = Result.Nodes.getNodeAs&lt;clang::FunctionDecl&gt;(<span class="string">"caller"</span>)) &#123;</span><br><span class="line">            caller-&gt;dump();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 获取被调用者的函数定义</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">const</span> FunctionDecl *callee = Result.Nodes.getNodeAs&lt;clang::FunctionDecl&gt;(<span class="string">"callee"</span>)) &#123;</span><br><span class="line">            callee-&gt;dump();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argv, <span class="keyword">const</span> <span class="keyword">char</span> **argv)</span> </span>&#123;</span><br><span class="line">	StatementMatcher matcher = callExpr(hasAncestor(functionDecl().bind(<span class="string">"caller"</span>)),</span><br><span class="line">                                        callee(functionDecl().bind(<span class="string">"callee"</span>)));</span><br><span class="line">    MatchFinder finder;</span><br><span class="line">    FindFuncCall callback;</span><br><span class="line">    finder.addMatcher(matcher, &amp;callback);</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 执行Matcher</span></span><br><span class="line">    <span class="function">CommonOptionsParser <span class="title">OptionsParser</span><span class="params">(argc, argv, MyToolCategory)</span></span>;</span><br><span class="line">    ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());</span><br><span class="line">    Tool.run(newFrontendActionFactory(&amp;finder).get());</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上述匹配表达式中的每一个函数(如callExpr)被称为一个<code>Matcher</code>，所有的<code>Matcher</code>可以分为三类：</p>
+<ul>
+<li><p><strong>Node Matchers</strong>：匹配表达式的核心，用来匹配特定类型的所有节点，所有的匹配表达式都是由一个<code>Node Matcher</code>来开始的，并且只有在<code>Node Matcher</code>上可以调用<code>bind</code>方法。<code>Node Mathcher</code>可以包含任意数量的参数，在参数中传入其他的Matcher来操纵匹配的节点，但是需要注意的是所有作为参数传入的Matcher都会作用在同一个被匹配的节点上，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DeclarationMatcher matcher = recordDecl(cxxRecordDecl().bind(&quot;class&quot;),</span><br><span class="line">										hasName(&quot;MyClass&quot;));</span><br></pre></td></tr></table></figure>
+<p>该matcher的含义是查找名字为“MyClass”的c++类，<code>recordDecl</code>是一个<code>Node Matcher</code>，匹配所有的class、struct和union的定义；<code>hasName</code>匹配名字为”MyClass”的节点；<code>cxxRecordDecl</code>匹配C++类定义的节点，并将其绑定到字符串”class”上。</p>
+</li>
+<li><strong>Narrowing Matchers</strong>：顾名思义，这种Matcher提供了条件判断能力用来缩小匹配范围，如第二个例子中的<code>hasName</code>就是一个<code>Narrowing Matcher</code>，只匹配名称为”MyClass”的节点。</li>
+<li><strong>Traversal Matchers</strong>：以当前匹配的节点作为起点，用来限定匹配表达式查找的范围。如第一个例子中的<code>hasAncestor</code>，在当前节点的祖先节点中进行下一步的匹配。</li>
+</ul>
+<h3 id="RecursiveASTVisitor"><a href="#RecursiveASTVisitor" class="headerlink" title="RecursiveASTVisitor"></a>RecursiveASTVisitor</h3><p><code>RecursiveASTVisitor</code>是Clang提供的另一种访问AST的方式，使用起来很简单，你需要定义三个类，分别继承自<code>ASTFrontendAction</code>、<code>ASTConsumer</code>和<code>RecursiveASTVisitor</code>。<br>在自定义的MyFrontendAction中返回一个自定义的MyConsumer实例<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyFrontendAction</span> :</span> <span class="keyword">public</span> clang::ASTFrontendAction &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">virtual</span> <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;clang::ASTConsumer&gt; CreateASTConsumer(</span><br><span class="line">      clang::CompilerInstance &amp;Compiler, llvm::StringRef InFile) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;clang::ASTConsumer&gt;(<span class="keyword">new</span> MyConsumer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>在AST解析完毕后会调用MyConsumer的<code>HandleTranslationUnit</code>方法，<code>TranslationUnitDecl</code>是一个AST的根节点，<code>ASTContext</code>中保存了AST相关的所有信息，获取<code>TranslationUnitDecl</code>并将其交给MyVisitor，我们主要的操作都在Visitor中完成<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyConsumer</span> :</span> <span class="keyword">public</span> clang::ASTConsumer &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">HandleTranslationUnit</span><span class="params">(clang::ASTContext &amp;Context)</span> </span>&#123;</span><br><span class="line">      Visitor.TraverseDecl(Context.getTranslationUnitDecl());</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  	MyVisitor Visitor;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>在Visitor中访问感兴趣的节点只需要重写该类型节点的Visit方法就行了，比如我想访问代码中所有的C++类定义，只需要重写<code>VisitCXXRecordDecl</code>方法，就可以访问所有的的所有的C++类定义了<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyVisitor</span> :</span> <span class="keyword">public</span> RecursiveASTVisitor&lt;FindNamedClassVisitor&gt; &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  	<span class="function"><span class="keyword">bool</span> <span class="title">VisitCXXRecordDecl</span><span class="params">(CXXRecordDecl *decl)</span> </span>&#123;</span><br><span class="line">    	decl-&gt;dump();</span><br><span class="line">    	<span class="keyword">return</span> <span class="literal">true</span>; <span class="comment">// 返回true继续遍历，false则直接停止</span></span><br><span class="line">  	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>之后在main函数中使用<code>newFrontendActionFactory</code>创建<code>ToolAction</code>就可以了:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Tool.run(newFrontendActionFactory&lt;CallGraphAction&gt;().get());</span><br></pre></td></tr></table></figure></p>
+<h2 id="构建CallGraph工具"><a href="#构建CallGraph工具" class="headerlink" title="构建CallGraph工具"></a>构建CallGraph工具</h2><p>在Clang源码中的<code>Analysis</code>文件夹中提供了一个名为<code>CallGraph</code>的类，参考这份源码的实现编写了自己的CallGraph工具。其中核心部分主要为三个类：<code>CallGraph</code>、<code>CallGraphNode</code>和<code>CGBuilder</code>：</p>
+<ul>
+<li><p><strong>CallGraph</strong>：继承自<code>RecursiveASTVisitor</code>，实现<code>VisitFunctionDecl</code>和<code>VisitObjCMethodDecl</code>方法，遍历所有的C函数和Objective-C方法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCMethodDecl</span><span class="params">(ObjCMethodDecl *MD)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (isInSystem(MD)) &#123; <span class="comment">// 忽略系统库中的定义</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (canBeCallerInGraph(MD)) &#123;</span><br><span class="line">        addRootNode(MD); <span class="comment">// 添加一个Node到Roots</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>addRootNode</code>中将其封装成<code>CallGraphNode</code>对象并保存在一个map类型的成员对象<code>Roots</code>中。随后获取函数体(<code>CompoundStmt</code>类型)，将其传递给<code>CGBuilder</code>查找在函数体中被调用的方法。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> CallGraph::addRootNode(Decl *decl) &#123;</span><br><span class="line">  CallGraphNode *Node = getOrInsertNode(decl); <span class="comment">// 将decl封装成Node，并添加到Roots中</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 初始化CGBuilder遍历函数里中所有的方法调用</span></span><br><span class="line">  <span class="function">CGBuilder <span class="title">builder</span><span class="params">(<span class="keyword">this</span>, Node, Context)</span></span>;</span><br><span class="line">  <span class="keyword">if</span> (Stmt *Body = decl-&gt;getBody())</span><br><span class="line">      builder.Visit(Body);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>CallGraphNode</strong>：封装了一个<code>Decl</code>类型的的实例（C函数或OC方法的定义），用来表示一个AST节点，所有被该函数所调用的其他函数会被添加到vector类型的成员变量<code>CalledFunctions</code>中。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CallGraphNode</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// C函数或OC方法的定义</span></span><br><span class="line">    Decl *decl;</span><br><span class="line">    <span class="comment">// 保存所有被decl调用的Node</span></span><br><span class="line">    SmallVector&lt;CallGraphNode*, <span class="number">5</span>&gt; CalledFunctions;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>CGBuilder</strong>：继承自<code>StmtVisitor</code>，初始化时获取一个CallerNode，遍历该CallerNode对应函数的函数体，查找函数体中的方法调用：<code>CallExpr</code>和<code>ObjCMessageExpr</code>。<code>CallExpr</code>表示普通的C函数调用，<code>ObjCMessageExpr</code>表示Objective-C方法调用。获取被调用函数的定义并封装成<code>CallGraphNode</code>类型，然后将其添加到CallerNode的<code>CalledFunctions</code>中。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CGBuilder</span> :</span> <span class="keyword">public</span> StmtVisitor&lt;CGBuilder&gt; &#123;</span><br><span class="line">  CallGraph *G;</span><br><span class="line">  CallGraphNode *CallerNode;</span><br><span class="line">  ASTContext &amp;Context;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">VisitObjCMessageExpr</span><span class="params">(ObjCMessageExpr *ME)</span> </span>&#123;</span><br><span class="line">      <span class="comment">// 从ObjCMessageExpr中获取被调用方法的Decl</span></span><br><span class="line">      Decl *decl = ...</span><br><span class="line">      </span><br><span class="line">      <span class="comment">// 将decl封装在CallGraphNode中并添加到CallerNode的CalledFunctions中</span></span><br><span class="line">      addCalledDecl(decl); </span><br><span class="line">  &#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>目前只实现了一个基础版本，支持C和Objecive-C，实现了最基本的功能，代码也比较简单，之后会继续优化并增加新的功能，所有代码已经托管到github上：<a href="https://github.com/L-Zephyr/clang-mapper" target="_blank" rel="noopener">https://github.com/L-Zephyr/clang-mapper</a> </p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>可以下载并自行编译源码，或者直接使用release文件夹中预先编译好的二进制文件<code>clang-mapper</code>(使用Clang5.0.0编译)，由于采用了<code>Graphviz</code>来生成调用图，请确保在运行前已正确安装了<code>Graphviz</code>  </p>
+<h3 id="编译源码"><a href="#编译源码" class="headerlink" title="编译源码"></a>编译源码</h3><p>关于如何编译用LibTooling编写的工具，<a href="https://clang.llvm.org/docs/LibASTMatchersTutorial.html" target="_blank" rel="noopener">Clang官方文档</a>中有详细的说明</p>
+<ol>
+<li><p>首先下载LLVM和Clang的源码。</p>
+</li>
+<li><p>将<code>clang-mapper</code>文件夹拷贝到<code>llvm/tools/clang/tools/</code>中。</p>
+</li>
+<li><p>编辑文件<code>llvm/tools/clang/tools/CMakeLists.txt</code>，在最后加上一句<code>add_clang_subdirectory(clang-mapper)</code></p>
+</li>
+<li><p>建议采用外部编译，在包含llvm文件夹的目录下创建build文件夹，在build目录中编译源码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir build</span><br><span class="line">$ cd build</span><br><span class="line">$ cmake -G &apos;Unix Makefiles&apos; ../llvm</span><br><span class="line">$ make</span><br></pre></td></tr></table></figure>
+<p>也可以按照文档中介绍的使用Ninja来编译，编译过程过会生成20多个G的中间文件，编译结束后在<code>build/bin/</code>中就能找到<code>clang-mapper</code>文件了，将其拷贝到<code>/usr/local/bin</code>目录下</p>
+</li>
+</ol>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>传入任意数量的文件或是文件夹，<code>clang-mapper</code>会自动处理所有文件并在当前执行命令的路径下生成函数的调用图，以代码文件的命名做区分。如下，我们用clang-mapper分析大名鼎鼎的AFNetworking的核心代码。我不希望将分析的生成的结果和源码文件混在一起，所以我创建了一个文件夹CallGraph并在该目录下调用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cd ./AFNetworking-master</span><br><span class="line">$ mkdir CallGraph</span><br><span class="line">$ cd ./CallGraph</span><br><span class="line">$ clang-mapper ../AFNetworking --</span><br></pre></td></tr></table></figure></p>
+<p>之后程序会自动分析<code>../AFNetworking</code>下的所有代码文件，并在CallGraph目录下生成对应的png文件：<br><img src="/images/4.png" alt=""><br><img src="/images/5.png" alt=""></p>
+<h3 id="命令行参数"><a href="#命令行参数" class="headerlink" title="命令行参数"></a>命令行参数</h3><p>clang-mapper提供了一些可选的命令行参数</p>
+<ul>
+<li><strong>-graph-only</strong>：只生成调用图png文件，不保留dot文件，这个是默认选项</li>
+<li><strong>-dot-only</strong>：只生成dot文件，不生成png文件</li>
+<li><strong>-dot-graph</strong>：同时生成dot文件和png文件</li>
+<li><strong>-ignore-header</strong>：在iOS开发中头文件通常只用来声明，加上该选项可以忽略文件夹中的.h文件</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="https://clang.llvm.org/docs/LibASTMatchersTutorial.html" target="_blank" rel="noopener">https://clang.llvm.org/docs/LibASTMatchersTutorial.html</a></li>
+<li><a href="https://clang.llvm.org/docs/RAVFrontendAction.html" target="_blank" rel="noopener">https://clang.llvm.org/docs/RAVFrontendAction.html</a></li>
+<li><a href="https://clang.llvm.org/docs/LibASTMatchersReference.html" target="_blank" rel="noopener">https://clang.llvm.org/docs/LibASTMatchersReference.html</a></li>
+<li><a href="https://clang.llvm.org/docs/IntroductionToTheClangAST.html" target="_blank" rel="noopener">https://clang.llvm.org/docs/IntroductionToTheClangAST.html</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/13/RxSwift学习记录/" rel="prev" title="RxSwift学习记录">
+                RxSwift学习记录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">Artikel</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#抽象语法树"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x62BD;&#x8C61;&#x8BED;&#x6CD5;&#x6811;" class="headerlink" title="&#x62BD;&#x8C61;&#x8BED;&#x6CD5;&#x6811;"></a>&#x62BD;&#x8C61;&#x8BED;&#x6CD5;&#x6811;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LibTooling和Clang-Plugin"><span class="nav-number">2.</span> <span class="nav-text"><a href="#LibTooling&#x548C;Clang-Plugin" class="headerlink" title="LibTooling&#x548C;Clang Plugin"></a>LibTooling&#x548C;Clang Plugin</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问抽象语法树"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x8BBF;&#x95EE;&#x62BD;&#x8C61;&#x8BED;&#x6CD5;&#x6811;" class="headerlink" title="&#x8BBF;&#x95EE;&#x62BD;&#x8C61;&#x8BED;&#x6CD5;&#x6811;"></a>&#x8BBF;&#x95EE;&#x62BD;&#x8C61;&#x8BED;&#x6CD5;&#x6811;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ASTMatchers"><span class="nav-number">1.</span> <span class="nav-text"><a href="#ASTMatchers" class="headerlink" title="ASTMatchers"></a>ASTMatchers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RecursiveASTVisitor"><span class="nav-number">2.</span> <span class="nav-text"><a href="#RecursiveASTVisitor" class="headerlink" title="RecursiveASTVisitor"></a>RecursiveASTVisitor</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构建CallGraph工具"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x6784;&#x5EFA;CallGraph&#x5DE5;&#x5177;" class="headerlink" title="&#x6784;&#x5EFA;CallGraph&#x5DE5;&#x5177;"></a>&#x6784;&#x5EFA;CallGraph&#x5DE5;&#x5177;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x4F7F;&#x7528;" class="headerlink" title="&#x4F7F;&#x7528;"></a>&#x4F7F;&#x7528;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编译源码"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x7F16;&#x8BD1;&#x6E90;&#x7801;" class="headerlink" title="&#x7F16;&#x8BD1;&#x6E90;&#x7801;"></a>&#x7F16;&#x8BD1;&#x6E90;&#x7801;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本使用"><span class="nav-number">2.</span> <span class="nav-text"><a href="#&#x57FA;&#x672C;&#x4F7F;&#x7528;" class="headerlink" title="&#x57FA;&#x672C;&#x4F7F;&#x7528;"></a>&#x57FA;&#x672C;&#x4F7F;&#x7528;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命令行参数"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x547D;&#x4EE4;&#x884C;&#x53C2;&#x6570;" class="headerlink" title="&#x547D;&#x4EE4;&#x884C;&#x53C2;&#x6570;"></a>&#x547D;&#x4EE4;&#x884C;&#x53C2;&#x6570;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number"></span> <span class="nav-text"><a href="#&#x53C2;&#x8003;&#x8D44;&#x6599;" class="headerlink" title="&#x53C2;&#x8003;&#x8D44;&#x6599;"></a>&#x53C2;&#x8003;&#x8D44;&#x6599;</span></a></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

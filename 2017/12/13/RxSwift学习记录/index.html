@@ -79,12 +79,16 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="Observable在RxSwift中，最关键的一个概念是可观察序列（Observable Sequence），它相当于Swift中的序列（Sequence），可观察序列中的每个元素都是一个事件，我们知道Swift的序列中可以包含任意多个元素，类似的，可观察序列会不断产生新的事件直到发生错误或正常结束为止。订阅者（Observer）通过订阅（subscribe）一个可观察队列来接收序列所产生的新事">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxSwift学习记录">
+<meta property="og:url" content="http://yoursite.com/2017/12/13/RxSwift学习记录/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Observable在RxSwift中，最关键的一个概念是可观察序列（Observable Sequence），它相当于Swift中的序列（Sequence），可观察序列中的每个元素都是一个事件，我们知道Swift的序列中可以包含任意多个元素，类似的，可观察序列会不断产生新的事件直到发生错误或正常结束为止。订阅者（Observer）通过订阅（subscribe）一个可观察队列来接收序列所产生的新事">
+<meta property="og:updated_time" content="2017-12-13T10:43:50.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="RxSwift学习记录">
+<meta name="twitter:description" content="Observable在RxSwift中，最关键的一个概念是可观察序列（Observable Sequence），它相当于Swift中的序列（Sequence），可观察序列中的每个元素都是一个事件，我们知道Swift的序列中可以包含任意多个元素，类似的，可观察序列会不断产生新的事件直到发生错误或正常结束为止。订阅者（Observer）通过订阅（subscribe）一个可观察队列来接收序列所产生的新事">
 
 
 
@@ -114,13 +118,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/12/13/RxSwift学习记录/"/>
 
 
 
 
 
-  <title>Hexo</title>
+  <title>RxSwift学习记录 | Hexo</title>
   
 
 
@@ -139,8 +143,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -213,194 +216,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/13/drafter/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/13/drafter/" itemprop="url">Drafter - 一个在iOS项目中分析代码结构的工具</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Veröffentlicht am</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-13T18:45:13+08:00">
-                2017-12-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>在很久之前的一篇<a href="http://www.jianshu.com/p/e19aafbaddca" target="_blank" rel="noopener">博客</a>中，曾经用clang提供的库<code>LibTooling</code>编写了一个简单的导出iOS代码中函数调用关系图的工具，然而这种实现方式存在一些很明显的缺点：</p>
-<ol>
-<li>在分析一个工程中的单个代码文件时，无法得知定义在其他文件中的类或方法，导致生成的语法树节点缺失，对最终的结果造成不小的影响。</li>
-<li>在解析时clang会进行预处理，导致最终生成的结果可能包括一些外部系统库的函数，这对于我们来说是无用的信息（当然这个应该是我的使用姿势问题）。</li>
-<li>无法支持swift。swift编译器的前端并不是clang，而这个工具是基于clang的库来开发的，所以也就没有支持swift的可能。</li>
-</ol>
-<p>由于这几个缺点（主要是第三点，因为在日常工作中还是以swift为主），后来也没有再继续使用和完善。直到最近因为工作上的安排，需要维护一份较为陈旧的代码，面对动辄数千行的代码文件，觉得还是需要一个比较趁手的工具来辅助阅读。前段时间正好恰逢国庆长假，抽空用swift重新写了一个工具：drafter，如名字所示，它的目的在于生成描述代码的草图。</p>
-<h2 id="Drafter是什么"><a href="#Drafter是什么" class="headerlink" title="Drafter是什么"></a>Drafter是什么</h2><ul>
-<li>Drafter是一个命令行工具，用于分析iOS工程的代码，支持Objective-C和Swift。</li>
-<li>自动解析代码并生成方法调用关系图。</li>
-<li>自动解析代码并生成类继承关系图。</li>
-</ul>
-<h2 id="安装和使用"><a href="#安装和使用" class="headerlink" title="安装和使用"></a>安装和使用</h2><p>完整的代码在这里：<a href="https://github.com/L-Zephyr/Drafter" target="_blank" rel="noopener">https://github.com/L-Zephyr/Drafter</a></p>
-<p>这里提供了一个快速安装的脚本，在shell中执行指令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl "https://raw.githubusercontent.com/L-Zephyr/Drafter/master/install.sh" | /bin/sh</span><br></pre></td></tr></table></figure>
-<p><code>drafter</code>程序会自动安装到  /usr/local/bin 目录中，之后直接在终端使用即可。</p>
-<p>具体使用方法请查看<a href="https://github.com/L-Zephyr/Drafter#基本使用" target="_blank" rel="noopener">使用介绍</a></p>
-<h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><p><em>注：解析器部分后来已用parser combinator重构，文章所讲述的代码对应于0.1.0的tag</em></p>
-<p>在之前的做法中对源码的解析全交给clang，只对生成的AST做处理，这其实是一种比较偷懒的做法，对最后生成的结果不可控，而且也断了支持swift的可能。为了获得更优化的输出并同时支持Swift和OC，源码解析这一步还是得自己来做。幸运的是我们只需要解析类、方法定义、方法调用这几块，实际工作并不是很复杂。</p>
-<h3 id="词法解析"><a href="#词法解析" class="headerlink" title="词法解析"></a>词法解析</h3><p>词法解析是程序编译的第一步，所谓词法解析就是将代码分割成一系列的词法单元。词法单元是一个有特殊意义的标记，也是语法分析程序在处理源代码时的最小单元。比如说一个简单的赋值表达式<code>int i = 3</code>，在经过词法分析之后被处理成了一系列的词法单元：<code>int</code>、<code>i</code>、<code>=</code>、<code>3</code>。</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Token</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> type: <span class="type">TokenType</span></span><br><span class="line">    <span class="keyword">var</span> text: <span class="type">String</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">TokenType</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> endOfFile   <span class="comment">// 文件结束</span></span><br><span class="line">    <span class="keyword">case</span> name        <span class="comment">// 变量名</span></span><br><span class="line">    <span class="keyword">case</span> colon       <span class="comment">// 冒号 	</span></span><br><span class="line">    <span class="keyword">case</span> comma       <span class="comment">// 逗号     </span></span><br><span class="line">  	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>先定义一个名为<code>Token</code>的结构体，用来表示词法单元，其中枚举值<code>type</code>用来表示词法单元的类型，<code>text</code>保存该词法单元的原始数据，如：对于一个变量n，它在解析成Token之后type为<code>.name</code>，text为<code>n</code>。由于我们的目的只是解析类和方法，所以这里只定义了在类和方法的定义中会用到的词法单元类型，对于那些我们不关心的词法则一概忽略。</p>
-<p>词法解析器会将任何输入的源代码解析成词法单元流，对于上层使用者来说就像是迭代器一样遍历词法单元直到文件结束，所以这里可以定义一个基本的词法解析器类型，只有一个计算属性<code>nextToken</code>，用来获取下一个词法单元：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Lexer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> nextToken: <span class="type">Token</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="语法解析"><a href="#语法解析" class="headerlink" title="语法解析"></a>语法解析</h3><p>在经过第一步的词法分析将源代码分割成带有类型的词法单元之后，就可以进入语法解析的阶段了。要分析一段程序，如表达式<code>1 + 2</code>，我们是无法直接从字面上来处理的，必须将其转换成某种可以处理的中间形式，这就是语法解析要做的事情。语法解析器根据语言的文法规则扫描词法单元流，同时生成中间表示形式（IR），通常来说会生成一棵抽象语法树（AST），之后的语义分析阶段会基于这一步生成的AST进行分析。Drafter只处理到语法解析这一步，仅对代码中的类、方法定义和方法调用进行解析，解析后生成的数据结构也比较简单。</p>
-<h4 id="语言的文法描述"><a href="#语言的文法描述" class="headerlink" title="语言的文法描述"></a>语言的文法描述</h4><p>程序是由多个有效的表达式组成的，我们要做的就是将这些符合特定规则的式子识别出来，语言特定的语法规则称为这门语言的文法，这种规则可以用一种DSL来描述（BNF范式）。</p>
-<p>举个例子（来源于《编程语言实现模式》一书），对于一个可以包含任意字母的列表声明如<code>[a, b, c]</code>，它的文法规则描述如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">list</span> = <span class="string">'['</span> elements <span class="string">']'</span>; <span class="comment">// 单引号之间的内容直接匹配</span></span><br><span class="line">elements = elemenet (<span class="string">','</span> element)*; <span class="comment">// *表示0个或多个</span></span><br><span class="line">element = NAME | <span class="built_in">list</span>; <span class="comment">// |表示或，元素可能是另一个列表</span></span><br><span class="line">NAME = (<span class="string">'a'</span>.<span class="number">.'</span>z' | <span class="string">'A'</span>.<span class="number">.'</span>Z')+; <span class="comment">// +表示一个或多个</span></span><br></pre></td></tr></table></figure>
-<p>上面每一条式子都描述了一条文法规则，这里将词法规则和文法规则做了区分，文法规则的名称小写，词法规则的名称大写。像<code>list</code>这样的规则称为产生式，它可以继续向下推导，如<code>list</code>会产生<code>elements</code>。另外有一些被单引号包围的符号，这样的符号是实际要匹配的内容，称为终结符，因为它无法再继续往下推导了。</p>
-<p>这个文法描述了一个列表声明的语法，每个规则都包含一个或多个解析选项，多个解析选项通过<code>|</code>符号分隔。上面声明了三个文法规则和一个词法规则：词法规则<code>NAME</code>匹配包含至少一个字母的词法单元；<code>list</code>规则表示列表必须由中括号包围，并至少包含一个元素，多个元素之间用逗号分隔，元素可以是一个变量也可以是另一个列表声明。</p>
-<p>有了明确的文法规则定义我们才能够去编写语法解析器，对Objective-C的文法我参考了<a href="https://kornel.ski/objective-c-grammar" target="_blank" rel="noopener">这里</a>。</p>
-<h4 id="递归下降分析法"><a href="#递归下降分析法" class="headerlink" title="递归下降分析法"></a>递归下降分析法</h4><p>定义了语法的结构和相关的词法单元之后，在解析时只需要识别出相应的式子即可，简单来说解析器的工作就是：遇到某种结构，就执行某种操作。具体到实现上，我们为每一种文法规则提供一个专用匹配函数，对于词法规则则统一用<code>match</code>函数来匹配：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@discardableResult</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">match</span><span class="params">(<span class="number">_</span> t: TokenType)</span></span> <span class="keyword">throws</span> -&gt; <span class="type">Token</span> <span class="comment">// 匹配指定类型词法单元，匹配成功返回该词法单元</span></span><br></pre></td></tr></table></figure>
-<p>对于上面那个列表的例子，可以编写如下用于识别的函数：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">list</span><span class="params">()</span></span> <span class="keyword">throws</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">elements</span><span class="params">()</span></span> <span class="keyword">throws</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">element</span><span class="params">()</span></span> <span class="keyword">throws</span></span><br></pre></td></tr></table></figure>
-<p>每个函数都识别一个特定的子结构，并且可能会调用其他的识别函数或递归调用自身。在识别时从起始的词法单元开始，自上而下进行推导。所以这种分析的方法也被称为递归下降分析法，以这种方法编写的解析器称为LL解析器。第一个L表示解析内容的输入顺序是从左到右，第二个L表示解析时也是从左向右进行推导（最左推导）。</p>
-<p>对于上面的<code>element</code>规则，它可能匹配一个变量名或是另一个列表，在进入<code>element</code>函数时需要先进行判断，所幸<code>list</code>规则始终以<code>[</code>符号开始，变量的规则始终以字母开始，只需要检查当前的词法单元类型就可以做出判断：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">element</span><span class="params">()</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> currentToken.type == .leftSquare &#123;</span><br><span class="line">      	<span class="keyword">try</span> list()</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> match(.name)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在这个列表的文法规则中，从当前的位置开始只需要检查一个词法单元的类型就可以做出决断，像这样的文法称为<code>LL(1)</code>文法，相应的解析器称为LL(1)解析器，1表示该解析器只能从解析位置向前查看一个词法单元，通常这个词法单元被称为前瞻符号（lookahead）。</p>
-<h4 id="LL-k-解析器"><a href="#LL-k-解析器" class="headerlink" title="LL(k)解析器"></a>LL(k)解析器</h4><p>LL(1)解析器十分简单，但是解析能力不足。比如在上面列表语法的例子中，为列表的元素添加一个赋值的操作：<code>[a, b = c, d]</code>，这样一来，<code>element</code>规则就变成了：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">element = NAME</span><br><span class="line">		| NAME <span class="string">'='</span> NAME</span><br><span class="line">		| <span class="built_in">list</span></span><br></pre></td></tr></table></figure>
-<p><code>element</code>文法中有两个解析选项都是以词法单元<code>NAME</code>开头的，仅查看一个词法单元无法确定，在解析时需要向前检查更多的词法单元，也就是说这个语法不再是LL(1)的了。</p>
-<p>在实际解析时情况比这里要复杂很多，可能需要向前检查看多个词法单元才能确定解析策略，所以需要构建一个能够根据需要查看任意多符号的解析器，也就是LL(k)解析器。目前在应用上有一些能够根据特定DSL自动生成解析器的工具，如Antlr等，但是考虑通过DSL生成的代码并不是特别便于调试，而且Drafter只是做了一些非常简单的解析工作，所以还是自己编写了一个简单的LL(k)解析器。在Drafter中提供一个这样一个基础的解析器：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BacktrackParser</span>: <span class="title">Parser</span> </span>&#123;</span><br><span class="line">    <span class="keyword">init</span>(lexer: <span class="type">Lexer</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.input = lexer</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">  	<span class="function"><span class="keyword">func</span> <span class="title">token</span><span class="params">(at index: Int = <span class="number">0</span>)</span></span> -&gt; <span class="type">Token</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">  	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>以一个词法解析器(Lexer)作为初始化参数，<code>token()</code>方法提供从当前位置开始向前查看任意位置词法单元的能力，而具体的文法规则解析则通过各个子类化的解析器来完成。Objective-C和Swift的代码通过不同的解析器来进行，解析完成后输出相同的数据结构，如表示类型的节点：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassNode</span>: <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> superCls: <span class="type">ClassNode</span>? = <span class="literal">nil</span> <span class="comment">// 父类</span></span><br><span class="line">    <span class="keyword">var</span> className: <span class="type">String</span> = <span class="string">""</span>     <span class="comment">// 类名</span></span><br><span class="line">    <span class="keyword">var</span> protocols: [<span class="type">String</span>] = []   <span class="comment">// 实现的协议</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在将所有关心的语法节点信息解析出来之后，剩下的就是对这些信息进行处理和展示了。Drafter中提供了一些对语法节点进行过滤和搜索的选项，通过提供的参数过滤出感兴趣的信息，最后将这些数据传递给<code>DotGenerator</code>类，这个类的作用是根据节点信息生成<code>Dot</code>语言（一种描述图形的语言）的代码，传递给<a href="http://www.graphviz.org/Download_macos.php" target="_blank" rel="noopener">Graphviz</a>生成图片。</p>
-<h4 id="方法调用解析"><a href="#方法调用解析" class="headerlink" title="方法调用解析"></a>方法调用解析</h4><p>单独讨论一下对于方法调用的解析，首先为方法调用定义一个语法节点类型：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">MethodInvoker</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> name(<span class="type">String</span>)    <span class="comment">// 普通变量</span></span><br><span class="line">    <span class="keyword">case</span> method(<span class="type">MethodInvokeNode</span>) <span class="comment">// 另一个方法调用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MethodInvokeNode</span>: <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> isSwift: <span class="type">Bool</span> = <span class="literal">false</span></span><br><span class="line">    <span class="keyword">var</span> invoker: <span class="type">MethodInvoker</span> = .name(<span class="string">""</span>) <span class="comment">// 调用者</span></span><br><span class="line">    <span class="keyword">var</span> params: [<span class="type">String</span>] = [] <span class="comment">// 参数名</span></span><br><span class="line">    <span class="keyword">var</span> methodName: <span class="type">String</span> = <span class="string">""</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>一个方法的调用者可能是一个变量，也可能是另一个方法调用的返回值（链式调用），所以<code>invoker</code>被定义为一个枚举值。</p>
-<p>OC方法调用的Parser由类<code>ObjcMessageSendParser</code>实现，swift方法调用的Parse由类<code>SwiftInvokeParser</code>实现。以OC为例，对于这样的简单调用：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[self.view insertSubview:subview atIndex:0];</span><br></pre></td></tr></table></figure>
-<p>匹配的结果为:<code>[self.view insertSubview: atIndex:]</code>，忽略参数的具体内容。对于链式的方法调用：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[self objectAtIndex: 1] doSomethingWith: param];</span><br></pre></td></tr></table></figure>
-<p>解析的结果只保留一个链式调用的表示：<code>[[self objectAtIndex:] doSomethingWith:]</code>，而不是<code>objectAtIndex:</code>和<code>doSomethingWith:</code>。</p>
-<p>而对于一些更加复杂的形式，如参数为一个Block的定义，Block中还调用了其他方法，如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[Post globalTimelinePostsWithBlock:^(NSArray *posts, NSError *error) &#123;</span><br><span class="line">    if (!error) &#123;</span><br><span class="line">        self.posts = posts;</span><br><span class="line">        [self.tableView reloadData];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
-<p>先看看对于OC方法调用文法的一个简单定义：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">message_send = <span class="string">'['</span> receiver param_list <span class="string">']'</span></span><br><span class="line">receiver = message_send | NAME</span><br><span class="line">param_list = NAME | (NAME <span class="string">':'</span> param)+</span><br><span class="line">param = ...</span><br></pre></td></tr></table></figure>
-<p>方法调用中具体的参数是通过规则<code>param</code>来解析的，<code>param</code>要知道自己当前是否位于另一个闭包或是其他子结构中，这样才能在正确的时机结束匹配，这一步可以通过计算左右括号的数量来判断，<code>param</code>在碰到另一个方法调用语句时进入<code>message_send</code>规则并将结果添加到最后的匹配结果中，伪代码如下：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">param</span><span class="params">()</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> 文件未结束 &#123;</span><br><span class="line">            <span class="keyword">if</span> 不在子结构中 &amp;&amp; 参数匹配结束 &#123;</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line">          </span><br><span class="line">            <span class="keyword">if</span> isMessageSend() &#123;</span><br><span class="line">                <span class="keyword">try</span> messageSend() <span class="comment">// 匹配方法调用</span></span><br><span class="line">				保存到最终的匹配结果中</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            consume()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>以上就是Drafter实现的基本思路，开头提到的三个问题基本上得到了解决。在这段时间的工作中Drafter给了我不少帮助，至少当我在面对一个这样的文件：</p>
-<p><img src="/images/1.png" alt=""></p>
-<p>以及动辄数百行的方法时不再那么头疼，导出指定方法的调用流可以更迅速的理清代码逻辑上的关系：</p>
-<p><img src="/images/2.png" alt=""></p>
-<p>之后如果有需要的话会为Drafter添加更多的功能、增强解析能力等，希望这个小工具能稍微减轻你在阅读代码时的负担😁。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
 
   
 
@@ -430,9 +248,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/13/RxSwift学习记录/" itemprop="url">RxSwift学习记录</a></h1>
+          <h1 class="post-title" itemprop="name headline">RxSwift学习记录</h1>
         
 
         <div class="post-meta">
@@ -482,9 +298,7 @@
       
 
       
-        
-          
-            <h2 id="Observable"><a href="#Observable" class="headerlink" title="Observable"></a>Observable</h2><p>在RxSwift中，最关键的一个概念是可观察序列（Observable Sequence），它相当于Swift中的序列（Sequence），可观察序列中的每个元素都是一个事件，我们知道Swift的序列中可以包含任意多个元素，类似的，可观察序列会不断产生新的事件直到发生错误或正常结束为止。订阅者（Observer）通过订阅（subscribe）一个可观察队列来接收序列所产生的新事件，只有在有观察者的情况下序列才可以发送事件。</p>
+        <h2 id="Observable"><a href="#Observable" class="headerlink" title="Observable"></a>Observable</h2><p>在RxSwift中，最关键的一个概念是可观察序列（Observable Sequence），它相当于Swift中的序列（Sequence），可观察序列中的每个元素都是一个事件，我们知道Swift的序列中可以包含任意多个元素，类似的，可观察序列会不断产生新的事件直到发生错误或正常结束为止。订阅者（Observer）通过订阅（subscribe）一个可观察队列来接收序列所产生的新事件，只有在有观察者的情况下序列才可以发送事件。</p>
 <p>例如，使用<code>of</code>操作创建一个可观察序列（以下简称为Observable）：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> seq = <span class="type">Observable</span>.of(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
 <p><code>of</code>是一种用来创建Observable的简便操作，在上面的代码中创建了一个类型为<code>Observable&lt;Int&gt;</code>的Observable，里面包含了三个元素：1，2，3。</p>
@@ -637,8 +451,6 @@
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> button = <span class="type">UIButton</span>(...)</span><br><span class="line">button.rx.tap</span><br></pre></td></tr></table></figure>
 <p>类似RxCocoa这样的RxSwift扩展库都是通过这种方式进行Rx扩展的。</p>
 
-          
-        
       
     </div>
     
@@ -655,198 +467,32 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/13/在iOS项目中自动生成函数调用关系图/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/13/在iOS项目中自动生成函数调用关系图/" itemprop="url">在iOS项目中自动生成函数调用关系图</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Veröffentlicht am</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-13T17:35:13+08:00">
-                2017-12-13
-              </time>
+              <a href="/2017/12/13/在iOS项目中自动生成函数调用关系图/" rel="next" title="在iOS项目中自动生成函数调用关系图">
+                <i class="fa fa-chevron-left"></i> 在iOS项目中自动生成函数调用关系图
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
+              <a href="/2017/12/13/drafter/" rel="prev" title="Drafter - 一个在iOS项目中分析代码结构的工具">
+                Drafter - 一个在iOS项目中分析代码结构的工具 <i class="fa fa-chevron-right"></i>
+              </a>
             
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <p>在平时的开发中经常需要阅读学习其他人的代码，当开始阅读一份自己完全不熟悉的代码时，通常会遇到一些麻烦，因为我必须要先找到代码逻辑的入口点并沿着逻辑链路将其梳理一遍，一份代码文件通常会伴随着许多的方法调用，这一个阶段往往是比较痛苦的，因为我必须花上许多时间来将这些方法之间的关系理清楚，这样才能在我的大脑中生成一份逻辑关系图。如果我们能自动生成源码中的方法调用图(Call Graph)，那样一定会对源码阅读有很大的帮助。  </p>
-<p>我们需要一个能够自动生成源码方法调用图的工具，那么这个工具必须能够理解并分析我们的代码，而最能理解代码的当然就是编译器了。我们编译Objective-C的代码所用的前端是Clang，Clang提供了一系列的工具来帮助我们分析源码，我们可以基于Clang来构建自己的工具。在这之前简单介绍一些相关概念：</p>
-<h3 id="抽象语法树"><a href="#抽象语法树" class="headerlink" title="抽象语法树"></a>抽象语法树</h3><p>抽象语法树（Abstract Syntax Code, AST）是源代码语法结构的树状表示，其中的每一个节点都表示一个源码中的结构，AST在编译中扮演了一个十分重要的角色，Clang分析输入的源码并生成AST，之后根据AST生成LLVM IR(中间码)。  </p>
-<p>我们可以使用Clang提供的工具<code>clang-check</code>来查看AST，创建一个代码文件test.c<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">square</span><span class="params">(<span class="keyword">int</span> num)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> num * num;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> result = square(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>在终端执行命令<code>clang-check -ast-dump test.m</code>，可以看到转换后的AST结构：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">|-FunctionDecl 0x7fa933840e00 &lt;/Users/lzephyr/Desktop/test.c:1:1, line:3:1&gt; line:1:5 used square &apos;int (int)&apos;</span><br><span class="line">| |-ParmVarDecl 0x7fa93302f720 &lt;col:12, col:16&gt; col:16 used num &apos;int&apos;</span><br><span class="line">| `-CompoundStmt 0x7fa933840fa0 &lt;col:21, line:3:1&gt;</span><br><span class="line">|   `-ReturnStmt 0x7fa933840f88 &lt;line:2:2, col:15&gt;</span><br><span class="line">|     `-BinaryOperator 0x7fa933840f60 &lt;col:9, col:15&gt; &apos;int&apos; &apos;*&apos;</span><br><span class="line">|       |-ImplicitCastExpr 0x7fa933840f30 &lt;col:9&gt; &apos;int&apos; &lt;LValueToRValue&gt;</span><br><span class="line">|       | `-DeclRefExpr 0x7fa933840ee0 &lt;col:9&gt; &apos;int&apos; lvalue ParmVar 0x7fa93302f720 &apos;num&apos; &apos;int&apos;</span><br><span class="line">|       `-ImplicitCastExpr 0x7fa933840f48 &lt;col:15&gt; &apos;int&apos; &lt;LValueToRValue&gt;</span><br><span class="line">|         `-DeclRefExpr 0x7fa933840f08 &lt;col:15&gt; &apos;int&apos; lvalue ParmVar 0x7fa93302f720 &apos;num&apos; &apos;int&apos;</span><br><span class="line">`-FunctionDecl 0x7fa933841010 &lt;line:5:1, line:7:1&gt; line:5:5 main &apos;int ()&apos;</span><br><span class="line">  `-CompoundStmt 0x7fa9338411f8 &lt;col:12, line:7:1&gt;</span><br><span class="line">    `-DeclStmt 0x7fa9338411e0 &lt;line:6:2, col:24&gt;</span><br><span class="line">      `-VarDecl 0x7fa9338410c0 &lt;col:2, col:23&gt; col:6 result &apos;int&apos; cinit</span><br><span class="line">        `-CallExpr 0x7fa9338411b0 &lt;col:15, col:23&gt; &apos;int&apos;</span><br><span class="line">          |-ImplicitCastExpr 0x7fa933841198 &lt;col:15&gt; &apos;int (*)(int)&apos; &lt;FunctionToPointerDecay&gt;</span><br><span class="line">          | `-DeclRefExpr 0x7fa933841120 &lt;col:15&gt; &apos;int (int)&apos; Function 0x7fa933840e00 &apos;square&apos; &apos;int (int)&apos;</span><br><span class="line">          `-IntegerLiteral 0x7fa933841148 &lt;col:22&gt; &apos;int&apos; 2</span><br></pre></td></tr></table></figure></p>
-<h3 id="LibTooling和Clang-Plugin"><a href="#LibTooling和Clang-Plugin" class="headerlink" title="LibTooling和Clang Plugin"></a>LibTooling和Clang Plugin</h3><p><code>LibTooling</code>是一个库，提供了对AST的访问和修改的能力，<code>LibTooling</code>可以用来编写可独立运行的程序，如我们上面所使用的<code>clang-check</code>，<code>LibTooling</code>提供了一系列便捷的方法来访问语法树。  </p>
-<p><code>Clang Plugin</code>与<code>LibTooling</code>类似，对AST有完全的控制权，但是不同的是<code>Clang Plugin</code>是作为插件注入到编译流程中的，并且可以嵌入xCode中。实际上使用<code>LibTooling</code>编写的独立工具只需要经过少许的改动就可以变成<code>Clang Plugin</code>来使用。</p>
-<h2 id="访问抽象语法树"><a href="#访问抽象语法树" class="headerlink" title="访问抽象语法树"></a>访问抽象语法树</h2><p>要获得函数之间的调用关系，我们必须分析AST，Clang提供了两种方法：<code>ASTMatchers</code>和<code>RecursiveASTVisitor</code>。</p>
-<h3 id="ASTMatchers"><a href="#ASTMatchers" class="headerlink" title="ASTMatchers"></a>ASTMatchers</h3><p><code>ASTMatchers</code>提供了一系列的函数，以DSL的方式编写匹配表达式来查找我们感兴趣的节点，并使用<code>bind</code>方法绑定到指定的名称上：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">StatementMatcher matcher = callExpr(hasAncestor(functionDecl().bind(<span class="string">"caller"</span>)), </span><br><span class="line">                                    callee(functionDecl().bind(<span class="string">"callee"</span>)));</span><br></pre></td></tr></table></figure></p>
-<p>上面的表达式匹配了源码中普通C函数的调用，并将调用者绑定到字符串”caller”，被调用者绑定到字符串”callee”，随后在回调方法中可以通过名称caller和callee来获取<code>FunctionDecl</code>类型的对象：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FindFuncCall</span> :</span> <span class="keyword">public</span> MatchFinder::MatchCallback &#123;</span><br><span class="line"><span class="keyword">public</span> :</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(<span class="keyword">const</span> MatchFinder::MatchResult &amp;Result)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 获取调用者的函数定义</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">const</span> FunctionDecl *caller = Result.Nodes.getNodeAs&lt;clang::FunctionDecl&gt;(<span class="string">"caller"</span>)) &#123;</span><br><span class="line">            caller-&gt;dump();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 获取被调用者的函数定义</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">const</span> FunctionDecl *callee = Result.Nodes.getNodeAs&lt;clang::FunctionDecl&gt;(<span class="string">"callee"</span>)) &#123;</span><br><span class="line">            callee-&gt;dump();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argv, <span class="keyword">const</span> <span class="keyword">char</span> **argv)</span> </span>&#123;</span><br><span class="line">	StatementMatcher matcher = callExpr(hasAncestor(functionDecl().bind(<span class="string">"caller"</span>)),</span><br><span class="line">                                        callee(functionDecl().bind(<span class="string">"callee"</span>)));</span><br><span class="line">    MatchFinder finder;</span><br><span class="line">    FindFuncCall callback;</span><br><span class="line">    finder.addMatcher(matcher, &amp;callback);</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 执行Matcher</span></span><br><span class="line">    <span class="function">CommonOptionsParser <span class="title">OptionsParser</span><span class="params">(argc, argv, MyToolCategory)</span></span>;</span><br><span class="line">    ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());</span><br><span class="line">    Tool.run(newFrontendActionFactory(&amp;finder).get());</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>上述匹配表达式中的每一个函数(如callExpr)被称为一个<code>Matcher</code>，所有的<code>Matcher</code>可以分为三类：</p>
-<ul>
-<li><p><strong>Node Matchers</strong>：匹配表达式的核心，用来匹配特定类型的所有节点，所有的匹配表达式都是由一个<code>Node Matcher</code>来开始的，并且只有在<code>Node Matcher</code>上可以调用<code>bind</code>方法。<code>Node Mathcher</code>可以包含任意数量的参数，在参数中传入其他的Matcher来操纵匹配的节点，但是需要注意的是所有作为参数传入的Matcher都会作用在同一个被匹配的节点上，如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DeclarationMatcher matcher = recordDecl(cxxRecordDecl().bind(&quot;class&quot;),</span><br><span class="line">										hasName(&quot;MyClass&quot;));</span><br></pre></td></tr></table></figure>
-<p>该matcher的含义是查找名字为“MyClass”的c++类，<code>recordDecl</code>是一个<code>Node Matcher</code>，匹配所有的class、struct和union的定义；<code>hasName</code>匹配名字为”MyClass”的节点；<code>cxxRecordDecl</code>匹配C++类定义的节点，并将其绑定到字符串”class”上。</p>
-</li>
-<li><strong>Narrowing Matchers</strong>：顾名思义，这种Matcher提供了条件判断能力用来缩小匹配范围，如第二个例子中的<code>hasName</code>就是一个<code>Narrowing Matcher</code>，只匹配名称为”MyClass”的节点。</li>
-<li><strong>Traversal Matchers</strong>：以当前匹配的节点作为起点，用来限定匹配表达式查找的范围。如第一个例子中的<code>hasAncestor</code>，在当前节点的祖先节点中进行下一步的匹配。</li>
-</ul>
-<h3 id="RecursiveASTVisitor"><a href="#RecursiveASTVisitor" class="headerlink" title="RecursiveASTVisitor"></a>RecursiveASTVisitor</h3><p><code>RecursiveASTVisitor</code>是Clang提供的另一种访问AST的方式，使用起来很简单，你需要定义三个类，分别继承自<code>ASTFrontendAction</code>、<code>ASTConsumer</code>和<code>RecursiveASTVisitor</code>。<br>在自定义的MyFrontendAction中返回一个自定义的MyConsumer实例<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyFrontendAction</span> :</span> <span class="keyword">public</span> clang::ASTFrontendAction &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">virtual</span> <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;clang::ASTConsumer&gt; CreateASTConsumer(</span><br><span class="line">      clang::CompilerInstance &amp;Compiler, llvm::StringRef InFile) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;clang::ASTConsumer&gt;(<span class="keyword">new</span> MyConsumer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>在AST解析完毕后会调用MyConsumer的<code>HandleTranslationUnit</code>方法，<code>TranslationUnitDecl</code>是一个AST的根节点，<code>ASTContext</code>中保存了AST相关的所有信息，获取<code>TranslationUnitDecl</code>并将其交给MyVisitor，我们主要的操作都在Visitor中完成<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyConsumer</span> :</span> <span class="keyword">public</span> clang::ASTConsumer &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">HandleTranslationUnit</span><span class="params">(clang::ASTContext &amp;Context)</span> </span>&#123;</span><br><span class="line">      Visitor.TraverseDecl(Context.getTranslationUnitDecl());</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  	MyVisitor Visitor;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>在Visitor中访问感兴趣的节点只需要重写该类型节点的Visit方法就行了，比如我想访问代码中所有的C++类定义，只需要重写<code>VisitCXXRecordDecl</code>方法，就可以访问所有的的所有的C++类定义了<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyVisitor</span> :</span> <span class="keyword">public</span> RecursiveASTVisitor&lt;FindNamedClassVisitor&gt; &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  	<span class="function"><span class="keyword">bool</span> <span class="title">VisitCXXRecordDecl</span><span class="params">(CXXRecordDecl *decl)</span> </span>&#123;</span><br><span class="line">    	decl-&gt;dump();</span><br><span class="line">    	<span class="keyword">return</span> <span class="literal">true</span>; <span class="comment">// 返回true继续遍历，false则直接停止</span></span><br><span class="line">  	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>之后在main函数中使用<code>newFrontendActionFactory</code>创建<code>ToolAction</code>就可以了:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Tool.run(newFrontendActionFactory&lt;CallGraphAction&gt;().get());</span><br></pre></td></tr></table></figure></p>
-<h2 id="构建CallGraph工具"><a href="#构建CallGraph工具" class="headerlink" title="构建CallGraph工具"></a>构建CallGraph工具</h2><p>在Clang源码中的<code>Analysis</code>文件夹中提供了一个名为<code>CallGraph</code>的类，参考这份源码的实现编写了自己的CallGraph工具。其中核心部分主要为三个类：<code>CallGraph</code>、<code>CallGraphNode</code>和<code>CGBuilder</code>：</p>
-<ul>
-<li><p><strong>CallGraph</strong>：继承自<code>RecursiveASTVisitor</code>，实现<code>VisitFunctionDecl</code>和<code>VisitObjCMethodDecl</code>方法，遍历所有的C函数和Objective-C方法：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VisitObjCMethodDecl</span><span class="params">(ObjCMethodDecl *MD)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (isInSystem(MD)) &#123; <span class="comment">// 忽略系统库中的定义</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (canBeCallerInGraph(MD)) &#123;</span><br><span class="line">        addRootNode(MD); <span class="comment">// 添加一个Node到Roots</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在<code>addRootNode</code>中将其封装成<code>CallGraphNode</code>对象并保存在一个map类型的成员对象<code>Roots</code>中。随后获取函数体(<code>CompoundStmt</code>类型)，将其传递给<code>CGBuilder</code>查找在函数体中被调用的方法。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> CallGraph::addRootNode(Decl *decl) &#123;</span><br><span class="line">  CallGraphNode *Node = getOrInsertNode(decl); <span class="comment">// 将decl封装成Node，并添加到Roots中</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 初始化CGBuilder遍历函数里中所有的方法调用</span></span><br><span class="line">  <span class="function">CGBuilder <span class="title">builder</span><span class="params">(<span class="keyword">this</span>, Node, Context)</span></span>;</span><br><span class="line">  <span class="keyword">if</span> (Stmt *Body = decl-&gt;getBody())</span><br><span class="line">      builder.Visit(Body);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>CallGraphNode</strong>：封装了一个<code>Decl</code>类型的的实例（C函数或OC方法的定义），用来表示一个AST节点，所有被该函数所调用的其他函数会被添加到vector类型的成员变量<code>CalledFunctions</code>中。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CallGraphNode</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// C函数或OC方法的定义</span></span><br><span class="line">    Decl *decl;</span><br><span class="line">    <span class="comment">// 保存所有被decl调用的Node</span></span><br><span class="line">    SmallVector&lt;CallGraphNode*, <span class="number">5</span>&gt; CalledFunctions;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>CGBuilder</strong>：继承自<code>StmtVisitor</code>，初始化时获取一个CallerNode，遍历该CallerNode对应函数的函数体，查找函数体中的方法调用：<code>CallExpr</code>和<code>ObjCMessageExpr</code>。<code>CallExpr</code>表示普通的C函数调用，<code>ObjCMessageExpr</code>表示Objective-C方法调用。获取被调用函数的定义并封装成<code>CallGraphNode</code>类型，然后将其添加到CallerNode的<code>CalledFunctions</code>中。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CGBuilder</span> :</span> <span class="keyword">public</span> StmtVisitor&lt;CGBuilder&gt; &#123;</span><br><span class="line">  CallGraph *G;</span><br><span class="line">  CallGraphNode *CallerNode;</span><br><span class="line">  ASTContext &amp;Context;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">VisitObjCMessageExpr</span><span class="params">(ObjCMessageExpr *ME)</span> </span>&#123;</span><br><span class="line">      <span class="comment">// 从ObjCMessageExpr中获取被调用方法的Decl</span></span><br><span class="line">      Decl *decl = ...</span><br><span class="line">      </span><br><span class="line">      <span class="comment">// 将decl封装在CallGraphNode中并添加到CallerNode的CalledFunctions中</span></span><br><span class="line">      addCalledDecl(decl); </span><br><span class="line">  &#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>目前只实现了一个基础版本，支持C和Objecive-C，实现了最基本的功能，代码也比较简单，之后会继续优化并增加新的功能，所有代码已经托管到github上：<a href="https://github.com/L-Zephyr/clang-mapper" target="_blank" rel="noopener">https://github.com/L-Zephyr/clang-mapper</a> </p>
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>可以下载并自行编译源码，或者直接使用release文件夹中预先编译好的二进制文件<code>clang-mapper</code>(使用Clang5.0.0编译)，由于采用了<code>Graphviz</code>来生成调用图，请确保在运行前已正确安装了<code>Graphviz</code>  </p>
-<h3 id="编译源码"><a href="#编译源码" class="headerlink" title="编译源码"></a>编译源码</h3><p>关于如何编译用LibTooling编写的工具，<a href="https://clang.llvm.org/docs/LibASTMatchersTutorial.html" target="_blank" rel="noopener">Clang官方文档</a>中有详细的说明</p>
-<ol>
-<li><p>首先下载LLVM和Clang的源码。</p>
-</li>
-<li><p>将<code>clang-mapper</code>文件夹拷贝到<code>llvm/tools/clang/tools/</code>中。</p>
-</li>
-<li><p>编辑文件<code>llvm/tools/clang/tools/CMakeLists.txt</code>，在最后加上一句<code>add_clang_subdirectory(clang-mapper)</code></p>
-</li>
-<li><p>建议采用外部编译，在包含llvm文件夹的目录下创建build文件夹，在build目录中编译源码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir build</span><br><span class="line">$ cd build</span><br><span class="line">$ cmake -G &apos;Unix Makefiles&apos; ../llvm</span><br><span class="line">$ make</span><br></pre></td></tr></table></figure>
-<p>也可以按照文档中介绍的使用Ninja来编译，编译过程过会生成20多个G的中间文件，编译结束后在<code>build/bin/</code>中就能找到<code>clang-mapper</code>文件了，将其拷贝到<code>/usr/local/bin</code>目录下</p>
-</li>
-</ol>
-<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>传入任意数量的文件或是文件夹，<code>clang-mapper</code>会自动处理所有文件并在当前执行命令的路径下生成函数的调用图，以代码文件的命名做区分。如下，我们用clang-mapper分析大名鼎鼎的AFNetworking的核心代码。我不希望将分析的生成的结果和源码文件混在一起，所以我创建了一个文件夹CallGraph并在该目录下调用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cd ./AFNetworking-master</span><br><span class="line">$ mkdir CallGraph</span><br><span class="line">$ cd ./CallGraph</span><br><span class="line">$ clang-mapper ../AFNetworking --</span><br></pre></td></tr></table></figure></p>
-<p>之后程序会自动分析<code>../AFNetworking</code>下的所有代码文件，并在CallGraph目录下生成对应的png文件：<br><img src="/images/4.png" alt=""><br><img src="/images/5.png" alt=""></p>
-<h3 id="命令行参数"><a href="#命令行参数" class="headerlink" title="命令行参数"></a>命令行参数</h3><p>clang-mapper提供了一些可选的命令行参数</p>
-<ul>
-<li><strong>-graph-only</strong>：只生成调用图png文件，不保留dot文件，这个是默认选项</li>
-<li><strong>-dot-only</strong>：只生成dot文件，不生成png文件</li>
-<li><strong>-dot-graph</strong>：同时生成dot文件和png文件</li>
-<li><strong>-ignore-header</strong>：在iOS开发中头文件通常只用来声明，加上该选项可以忽略文件夹中的.h文件</li>
-</ul>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
-<li><a href="https://clang.llvm.org/docs/LibASTMatchersTutorial.html" target="_blank" rel="noopener">https://clang.llvm.org/docs/LibASTMatchersTutorial.html</a></li>
-<li><a href="https://clang.llvm.org/docs/RAVFrontendAction.html" target="_blank" rel="noopener">https://clang.llvm.org/docs/RAVFrontendAction.html</a></li>
-<li><a href="https://clang.llvm.org/docs/LibASTMatchersReference.html" target="_blank" rel="noopener">https://clang.llvm.org/docs/LibASTMatchersReference.html</a></li>
-<li><a href="https://clang.llvm.org/docs/IntroductionToTheClangAST.html" target="_blank" rel="noopener">https://clang.llvm.org/docs/IntroductionToTheClangAST.html</a></li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -856,10 +502,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -867,6 +514,8 @@
 
 
           
+  
+
 
         </div>
         
@@ -887,8 +536,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -932,6 +590,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Observable"><span class="nav-number">1.</span> <span class="nav-text"><a href="#Observable" class="headerlink" title="Observable"></a>Observable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Observer"><span class="nav-number">2.</span> <span class="nav-text"><a href="#Observer" class="headerlink" title="Observer"></a>Observer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dispose"><span class="nav-number">3.</span> <span class="nav-text"><a href="#Dispose" class="headerlink" title="Dispose"></a>Dispose</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建序列"><span class="nav-number">4.</span> <span class="nav-text"><a href="#&#x521B;&#x5EFA;&#x5E8F;&#x5217;" class="headerlink" title="&#x521B;&#x5EFA;&#x5E8F;&#x5217;"></a>&#x521B;&#x5EFA;&#x5E8F;&#x5217;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Share"><span class="nav-number">5.</span> <span class="nav-text"><a href="#Share" class="headerlink" title="Share"></a>Share</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列的变换和组合"><span class="nav-number">6.</span> <span class="nav-text"><a href="#&#x5E8F;&#x5217;&#x7684;&#x53D8;&#x6362;&#x548C;&#x7EC4;&#x5408;" class="headerlink" title="&#x5E8F;&#x5217;&#x7684;&#x53D8;&#x6362;&#x548C;&#x7EC4;&#x5408;"></a>&#x5E8F;&#x5217;&#x7684;&#x53D8;&#x6362;&#x548C;&#x7EC4;&#x5408;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#变换"><span class="nav-number">6.1.</span> <span class="nav-text"><a href="#&#x53D8;&#x6362;" class="headerlink" title="&#x53D8;&#x6362;"></a>&#x53D8;&#x6362;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组合"><span class="nav-number">6.2.</span> <span class="nav-text"><a href="#&#x7EC4;&#x5408;" class="headerlink" title="&#x7EC4;&#x5408;"></a>&#x7EC4;&#x5408;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Subject"><span class="nav-number">7.</span> <span class="nav-text"><a href="#Subject" class="headerlink" title="Subject"></a>Subject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scheduler"><span class="nav-number">8.</span> <span class="nav-text"><a href="#Scheduler" class="headerlink" title="Scheduler"></a>Scheduler</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#subscribeOn和observeOn"><span class="nav-number">8.1.</span> <span class="nav-text"><a href="#subscribeOn&#x548C;observeOn" class="headerlink" title="subscribeOn&#x548C;observeOn"></a>subscribeOn&#x548C;observeOn</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为原有代码添加Rx扩展"><span class="nav-number">9.</span> <span class="nav-text"><a href="#&#x4E3A;&#x539F;&#x6709;&#x4EE3;&#x7801;&#x6DFB;&#x52A0;Rx&#x6269;&#x5C55;" class="headerlink" title="&#x4E3A;&#x539F;&#x6709;&#x4EE3;&#x7801;&#x6DFB;&#x52A0;Rx&#x6269;&#x5C55;"></a>&#x4E3A;&#x539F;&#x6709;&#x4EE3;&#x7801;&#x6DFB;&#x52A0;Rx&#x6269;&#x5C55;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -1051,6 +725,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 

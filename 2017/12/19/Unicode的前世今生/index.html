@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="之前突然发现自己对字符编码还是一知半解，基本上只是听说过各种编码的名字，对它们之间的特点和区别还是不甚了解。所以这段时间查阅了许多资料，对字符编码也大概有了一些整体的了解，写下这篇文章作为总结。 在Unicode之前为了在计算机的中储存人类可以阅读的文本，必须按照一定的规范将字符映射为计算机可以储存的数值，在计算机发展的早期渐渐形成了统一的标准，在1967年ASCII编码首次作为规范标准发布。这是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unicode的前世今生">
+<meta property="og:url" content="http://yoursite.com/2017/12/19/Unicode的前世今生/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="之前突然发现自己对字符编码还是一知半解，基本上只是听说过各种编码的名字，对它们之间的特点和区别还是不甚了解。所以这段时间查阅了许多资料，对字符编码也大概有了一些整体的了解，写下这篇文章作为总结。 在Unicode之前为了在计算机的中储存人类可以阅读的文本，必须按照一定的规范将字符映射为计算机可以储存的数值，在计算机发展的早期渐渐形成了统一的标准，在1967年ASCII编码首次作为规范标准发布。这是">
+<meta property="og:image" content="http://yoursite.com/images/big-endian.png">
+<meta property="og:image" content="http://yoursite.com/images/little-endian.png">
+<meta property="og:updated_time" content="2017-12-29T12:35:04.825Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Unicode的前世今生">
+<meta name="twitter:description" content="之前突然发现自己对字符编码还是一知半解，基本上只是听说过各种编码的名字，对它们之间的特点和区别还是不甚了解。所以这段时间查阅了许多资料，对字符编码也大概有了一些整体的了解，写下这篇文章作为总结。 在Unicode之前为了在计算机的中储存人类可以阅读的文本，必须按照一定的规范将字符映射为计算机可以储存的数值，在计算机发展的早期渐渐形成了统一的标准，在1967年ASCII编码首次作为规范标准发布。这是">
+<meta name="twitter:image" content="http://yoursite.com/images/big-endian.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/19/Unicode的前世今生/"/>
+
+
+
+
+
+  <title>Unicode的前世今生 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/19/Unicode的前世今生/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Unicode的前世今生</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-19T20:34:13+08:00">
+                2017-12-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>之前突然发现自己对字符编码还是一知半解，基本上只是听说过各种编码的名字，对它们之间的特点和区别还是不甚了解。所以这段时间查阅了许多资料，对字符编码也大概有了一些整体的了解，写下这篇文章作为总结。</p>
+<h1 id="在Unicode之前"><a href="#在Unicode之前" class="headerlink" title="在Unicode之前"></a>在Unicode之前</h1><p>为了在计算机的中储存人类可以阅读的文本，必须按照一定的规范将字符映射为计算机可以储存的数值，在计算机发展的早期渐渐形成了统一的标准，在1967年ASCII编码首次作为规范标准发布。这是一套用来表示现代英文的编码约定，全称为<em>美国信息交换标准代码</em>。ASCII编码非常简单，只定义了128个字符，每个字符通过唯一的编号来表示，每个字符占用一个字节（8bit）的空间，因为只有128个字符（2的7次方），所以每个字符的第一位始终为0。</p>
+<p>一个ASCII字符只有8位，最多只能表示256个字符，对于英文来说足够了，但是对于像中文这样的语言而言是远远不足的。所以在ASCII之上做了一些扩展，用两个字节来表示一个字符，这就是1981年发布的<strong>GB2312编码</strong>，为了与ASCII作区分，GB2312中每个字节的最高位都是1。这一套编码中包含了6000多个常用的简体汉字，基本满足日常使用的需求。但是不支持繁体汉字和一些生僻字，所以在后来又在GB2312上进行了扩展，这就是之后的<strong>GBK编码</strong>，全称为<em>汉字内码扩展规范</em>。</p>
+<p>事实上在那个年代还有很多不同的汉字编码百花齐放，而且不止是中文，世界上其他各种语言都在指定自己的标准，不同编码之间无法相互兼容，这为互联网的推广带来了很大的麻烦，统一字符编码势在必行。</p>
+<h1 id="Unicode"><a href="#Unicode" class="headerlink" title="Unicode"></a>Unicode</h1><p>Unicode是国际标准化组织制定的一套字符编码方案，致力于统一世界上所有语言字符的编码。Unicode为每个字符分配了一个固定的数值，称为<strong>编码点</strong>（Code Point），所有的编码点组成的集合称为<strong>编码空间</strong>（Code Space）。目前Unicode的编码空间共包含<code>0x10FFFF</code>（十进制的1114111）个编码点，被划分为17个平面，每个平面包含<code>0xFFFF</code>个字符。从1991年发布的第一个版本开始，每一年都会有新的字符被编入Unicode中，目前所定义的字符集只用了不到五分之一的编码空间。</p>
+<h2 id="编码方式"><a href="#编码方式" class="headerlink" title="编码方式"></a>编码方式</h2><p>Unicode制定了一套字符集编码的标准，而在实际中如何去表示一个编码点呢，有几种不同编码方案：UTF-8、UTF-16和UTF-32，这几种方案各有特点。</p>
+<h3 id="UTF-32："><a href="#UTF-32：" class="headerlink" title="UTF-32："></a>UTF-32：</h3><p>这是最简单的一种编码方式，定长编码。使用4个字节作为一个编码单元，也就是说每一个编码点都用4个字节来表示。</p>
+<p>定长编码的一个好处就是每个字符的做占用的空间都是相同的，所以当我们想要获取第n个位置的字符时，直接在首字符的地址加上一个固定的偏移量就可以了，也就是说可以在O(1)的时间复杂度索引字符串的任意位置，这也是我们常说的<strong>随机索引</strong>。但是这样做的缺点也十分明显，每个字符占用32个bit，肯定会造成大量的空间浪费，出于这个原因UTF-32编码用得并不多。</p>
+<h3 id="UTF-16："><a href="#UTF-16：" class="headerlink" title="UTF-16："></a>UTF-16：</h3><p>在介绍UTF-16之前，先讲讲<strong>UCS-2</strong>编码。在早期的Unicode标准中，只定义了不到65535（0xFFFF，2的16次方）个编码点，所有的字符都可以用两个字节的UTF-16编码来表示，所以在那个时候UTF-16还是一个定长编码，UCS-2就等同于UTF-16。然而设计师还是错误的估算了编码点的范围，16位的范围并不足以囊括世界上的所有文字，所以Unicode需要扩大最初的范围。在新的标准中编码空间被扩展到了<code>0x10FFFF</code>的大小，分成17块65535大小的板块，第一个板块包含了最初UCS-2中定义的65535个编码点，被称为<strong>基本多文种平面</strong>（BMP），余下新增的16个板块称为<strong>辅助平面</strong>。所以在今天来说，UTF-16可以看成UCS-2的父集。</p>
+<p>随着标准的扩充，UTF-16也必须扩展以支持更多的编码点。在如今的UTF-16编码中使用了2个字节作为一个编码单元，一个编码点需要2个或4个字节来表示。</p>
+<p>为了能正确表示辅助平面中的编码点，UTF-16对编码点的前缀做了一些约束，引入了一个称为<code>代理编码点</code>（surrogate）的概念。也就是在Unicode的编码空间中划分出了一块保留区域，落在在这个区域中的编码点就是代理编码点，这块区域包含从前缀<code>110110</code>到前缀<code>110111</code>的所有编码点，也就是从<code>1101100000000000</code>到<code>1101111111111111</code>的范围，十六进制为<code>0xD800</code>到<code>0xDFFF</code>。这个区域中的编码点只能成对出现在UTF-16编码中，出现在UTF-32和UTF-8中都是非法的。</p>
+<p>UTF-16在编码的时候遵循以下规则：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">字节数</th>
+<th style="text-align:center">UTF-16二进制表示</th>
+<th style="text-align:center">编码点</th>
+<th style="text-align:center">编码范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">xxxxxxxxyyyyyyyy</td>
+<td style="text-align:center">xxxxxxxxxxxxxxxx</td>
+<td style="text-align:center">0 ~ 0xFFFF</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">110110xxxxxxxxxx + 110111yyyyyyyyyy</td>
+<td style="text-align:center">xxxxxxxxxxyyyyyyyyyy + 0x10000</td>
+<td style="text-align:center">0x10000 ~ 0x10FFFF</td>
+</tr>
+</tbody>
+</table>
+<p>当编码点在0到0xFFFF的范围内时，这两个字节中的所有bit都可用来表示编码点；而当编码点大于0xFFFF，就必须要使用两个代理编码点了，分别取前后两个字节中低位的10个bit，这样就有了20bit的编码空间，最大能表示0x100000的值，再加上0xFFFF，正好就是<code>0x10FFFF</code>，Unicode中定义的最大编码空间。</p>
+<h3 id="UTF-8："><a href="#UTF-8：" class="headerlink" title="UTF-8："></a>UTF-8：</h3><p>UTF-8使用单个字节作为编码单元，这是一种变长编码，根据需要使用1个到4个字节来表示一个编码点。在这种编码模式中，一个字节可能是表示一个单字节的字符，也可能是多字节字符中的一部分，在解析的时候必须要能够区分出来。所以在UTF-8中每个字节最高的几个bit不用来储存编码值，而是用来表示该字节在其所表示的字符中的位置：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">字节数</th>
+<th style="text-align:center">UTF-8二进制表示</th>
+<th style="text-align:center">编码点</th>
+<th style="text-align:center">编码范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0xxxxxxx</td>
+<td style="text-align:center">xxxxxxx (7bit)</td>
+<td style="text-align:center">0 ~ 0x7F</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">110xxxxx + 10yyyyyy</td>
+<td style="text-align:center">yyyyyzzzzzz (11bit)</td>
+<td style="text-align:center">0x80 ~ 0x7FF</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1110xxxx + 10yyyyyy + 10zzzzzz</td>
+<td style="text-align:center">xxxxyyyyyyzzzzzz (16bit)</td>
+<td style="text-align:center">0x800 ~ 0xD7FF + 0xE000 ~ 0xFFFF</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">11110xxx + 10yyyyyy + 10zzzzzz + 10wwwwww</td>
+<td style="text-align:center">xxxyyyyyyzzzzzzwwwwww (21bit)</td>
+<td style="text-align:center">0x10000 ~ 0x10FFFF</td>
+</tr>
+</tbody>
+</table>
+<p><em>3个字节的情况下有两个编码范围，这是因为上一节中提到的代理编码点不能表示任何字符</em></p>
+<p>简单来说UTF-8的编码规则只有两条：</p>
+<ol>
+<li>单字节字符的最高位为0，后7位为该字符的编码值。</li>
+<li>n个字节的符号(n &gt; 1)，第一个字节的最高n位都为1，n + 1位为0，剩余的字节的最高位都为10。</li>
+</ol>
+<p>可以看到，单字节的UTF-8编码最高位作为标志位始终为0，在上面提到的ASCII编码中最高位没有用上也始终为0。也就是说前128个字符的编码方式与ASCII是完全相同的，这样一来UTF-8就能够完全兼容ASCII，用ASCII编码的文件无需任何转换就可以直接被UTF-8所识别。</p>
+<p>对空间的高效利用，以及对ASCII兼容性，使得UTF-8成为了最主流的编码方式。</p>
+<h2 id="字节序"><a href="#字节序" class="headerlink" title="字节序"></a>字节序</h2><p>说到字节序的问题必须先谈一谈大端和小端，在计算机的世界中多字节的数据会按照其字节顺序被储存，而字节之间的排列方式有两种：<strong>大端模式</strong>（Big-Endian）和<strong>小端模式</strong>（Big-Endian）：</p>
+<ul>
+<li><strong>大端模式</strong>：低位字节排放在内存中的高位地址，高位字节排放在内存中的低位地址。</li>
+<li><strong>小端模式</strong>：低位字节排放在内存中的低位地址，高位字节排放在内存中的高位地址。</li>
+</ul>
+<p>比如说有一个<code>short</code>类型的数据<code>0x3A80</code>，需要占用2个字节的空间，其中高位字节为<code>3A</code>，低位字节为<code>80</code>。</p>
+<p>使用<strong>大端模式</strong>储存时内存的排列方式如下，内存中的高地址方向存放的是低位字节<code>80</code>：</p>
+<p><img src="/images/big-endian.png" alt="大端模式"></p>
+<p>使用<strong>小端模式</strong>存储时内存中的排列方式如下，内存中高地址方向存放的是高位字节<code>3A</code>：</p>
+<p><img src="/images/little-endian.png" alt="小端模式"></p>
+<p>再回到Unicode中，由于UTF-16使用了两个字节作为一个编码单元，在解析的时候每次需要读取两个字节，所以字节序就变得尤为重要。例如汉字<code>呀</code>的编码点为<code>0x5440</code>，如果以错误的字节序来读取的话，则会将其识别为<code>0x4054</code>，这样一来就变成了汉字<code>䁔</code>。</p>
+<p>为了保证字符串始终能以正确的字节序来读取，标准建议UTF-16文件在起始的位置加上<code>0xFEFF</code>，称为<code>字节顺序标记（BOM）</code>。因为在读取文件是按照低地址到高地址的顺序，所以如果读取到<code>0xFEFF</code>则说明该文件是采用大端模式来储存的；如果读取到<code>0xFFFE</code>则说明文件是采用小端模式来存储的。</p>
+<p>如果使用的是UTF-8编码则不需要关心这个问题，因为UTF-8的编码单元只有一个字节，每次只需要读取一个字节即可，所以不存在字节顺序的问题。</p>
+<h2 id="组合字符"><a href="#组合字符" class="headerlink" title="组合字符"></a>组合字符</h2><p>Unicode的复杂性不仅体现在其编码方式上，在Unicode中有一些字符存在多种不同的表示方式。这是什么意思呢？有一些文字会带有音调符号，比如一个带有音标的符号<code>ǎ</code>，它可以直接通过编码点<code>0x01CE</code>来表示，也可以使用一个<code>a</code>（编码点为<code>0x0061</code>）和一个<code>̌</code>（编码点为<code>0x030C</code>）组合起来表示，虽然说编码看起来不一样，但是这两种写法在语义上和视觉上都是相同的。这样就引入了一个新的概念，我们称<code>ǎ</code>字符和<code>a</code>、<code>̌</code>组成的序列是<strong>标准等价</strong>的。</p>
+<p>这样麻烦就来了，当用两种写法来表示同一个字符的时候，计算机根据字节比较会认为它们是不同的。为了能正确判断字符串之间的等价性，Unicode规定了一套标准的<strong>正规化</strong>算法（有四种正规化的形式，就不再展开介绍了），也就是将所有标准等价的字符转换成统一的表示形式：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> c1 = <span class="string">'\u&#123;01CE&#125;'</span>; <span class="comment">// ǎ</span></span><br><span class="line"><span class="keyword">let</span> c2 = <span class="string">'\u&#123;0061&#125;\u&#123;030C&#125;'</span>; <span class="comment">// ǎ</span></span><br><span class="line"></span><br><span class="line">c1.normalize(); <span class="comment">// 01CE</span></span><br><span class="line">c1.normalize(); <span class="comment">// 01CE</span></span><br></pre></td></tr></table></figure>
+<p>在上面的这一段JavaScript代码中，<code>ǎ</code>的两种写法在经过正规化之后都被转换成了相同编码<code>01CE</code>，这样一来就能正确的进行相等性比较了。</p>
+<p>到了Emoji这边情况就变得更加复杂了，很多Emoji表情是用多个Unicode码点来表示的，比如说❤️是由一个心型字符 ❤（0x2764）和一个样式控制符号（0xFE0F）组合而成。此外Emoji还支持使用<strong>零宽度连接符</strong>（ZWJ，码点为<code>0x200D</code>）将多个Emoji字符组合新的字符。也就是将<code>0x200D</code>字符放在两个Emoji字符的中间，这两个Emoji会被连接起来组成新的Emoji字符。比如说👩和👦可以组合成👩‍👦（<code>\u{1f469}\u{200d}\u{1f466}</code>），像👨‍👩‍👧‍👧这种Emoji更是由7个Unicode字符组合成的复杂字符。</p>
+<p>从上面的这些例子中可以看出，在Unicode中语义上的单个字符实际上可能是由许多个字符组合而成的，为了更好的描述这种场景，Unicode中引入了一个称为<strong>字位簇</strong>（grapheme cluster）的概念。字位簇用来表示一个语义上的字符，不论是单个字符还是包含多个字符序列的组合字符，都视为一个字位簇。</p>
+<h1 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h1><p>在了解了Unicode的各种特性之后再来看看不同语言中对于字符编码的处理吧，下面对比了一下个人平常使用的语言中字符编码的异同：</p>
+<h2 id="JavaScript"><a href="#JavaScript" class="headerlink" title="JavaScript"></a>JavaScript</h2><p>在JavaScript刚刚发布的那个年代，还是UCS-2的天下，所以JavaScript内部字符串的编码方式采用了UTF-16，准确的说是UTF-16的子集UCS-2。</p>
+<p>这一历史问题为今天的JavaScript带来了一些困扰，因为所有的字符在JavaScript中都被视为两个字节的编码，如果字符串中包含辅助平面的编码点时，JavaScript会将其视为2个2字节的字符来处理。这个问题影响了JavaScript中的字符处理函数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> c = <span class="string">'𠀗'</span>; <span class="comment">// 0x20017</span></span><br><span class="line">c.length; <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line">c.charCodeAt(<span class="number">0</span>).toString(<span class="number">16</span>); <span class="comment">// 0xD840</span></span><br><span class="line">c.charCodeAt(<span class="number">1</span>).toString(<span class="number">16</span>); <span class="comment">// 0xDC17</span></span><br></pre></td></tr></table></figure>
+<p>上面代码中汉字”𠀗”的Unicode编码点是<code>0x20017</code>，大小超过了<code>0xFFFF</code>，位于辅助平面中，所以在UTF-16中需要4个字节，编码为<code>0xD840DC17</code>。调用length的输出是2，说明JavaScript将其识别成了两个字符。<code>charCodeAt</code>是一个用来打印指定位置字符编码值的方法，将结果转换成16进制后可以看到分别输出了两个编码单元的值<code>d840</code>和<code>dc17</code>。想必前端的同学一定对这些多字节字符处理上的坑深恶痛绝。</p>
+<p>不过好消息是ES6以来这些坑也在陆续填上了：新增的<code>codePointAt</code>方法能正确识别4字节的UTF-16字符、新的Unicode字符表示方法<code>\u{20017}</code>、新增<code>for…of</code>循环也能正确的遍历4字节字符…</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> c = <span class="string">'𠀗'</span>;</span><br><span class="line"><span class="built_in">Array</span>.from(c).length; <span class="comment">// 1</span></span><br><span class="line">c.codePointAt(<span class="number">0</span>) <span class="comment">// 20017</span></span><br></pre></td></tr></table></figure>
+<h2 id="Objective-C"><a href="#Objective-C" class="headerlink" title="Objective-C"></a>Objective-C</h2><p>OC中对字符串的处理与JavaScript类似，内部的字符串编码同样采用了UCS-2，上面的那个例子在OC中会获得同样的结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NSString *s = @&quot;𠀗&quot;; // 0x20017</span><br><span class="line">s.length; // 2</span><br><span class="line">[s characterAtIndex:0]; // 0xD840</span><br><span class="line">[s characterAtIndex:1]; // 0xDC17</span><br></pre></td></tr></table></figure>
+<p>想要获得正确的字符数可以先将字符串转换成定长的UTF-32编码，然后再除以4：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[@&quot;𠀗&quot; lengthOfBytesUsingEncoding:NSUTF32StringEncoding] / 4; // 1</span><br></pre></td></tr></table></figure>
+<p>这样子可以正确的识别出Unicode码点的个数，然而对于组合字符还是无能为力。</p>
+<p>这个问题同样会影响到比较字符串时常用的<code>isEqualToString</code>方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NSString *s1 = @&quot;a\u030C&quot;; // ǎ</span><br><span class="line">NSString *s2 = @&quot;\u01CE&quot;; // ǎ</span><br><span class="line"></span><br><span class="line">[s1 isEqualToString:s2]; // NO</span><br></pre></td></tr></table></figure>
+<p>若要对字符串进行标准等价比较，必须使用<code>compare</code>方法，或者先使用<code>precomposedStringWithCanonicalMapping</code>方法将字符串正规化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[s1 compare:s2] == NSOrderedSame; // YES</span><br><span class="line">[s1 precomposedStringWithCanonicalMapping];</span><br></pre></td></tr></table></figure>
+<h2 id="Swift"><a href="#Swift" class="headerlink" title="Swift"></a>Swift</h2><h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><p>Swift在字符串编码上做了很多事情，Swift用<code>String</code>类型来表示字符串，不同的是在遍历字符串的时候有很多种选择，可以按照字符来遍历，也可以按照UTF-8或UTF-16编码来遍历：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> s = <span class="string">"\u&#123;0061&#125;\u&#123;030C&#125;"</span> <span class="comment">// ǎ</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> <span class="keyword">var</span> <span class="built_in">c</span> <span class="keyword">in</span> s &#123;...&#125; <span class="comment">// ǎ</span></span><br><span class="line"><span class="keyword">for</span> <span class="keyword">var</span> <span class="built_in">c</span> <span class="keyword">in</span> s.utf8 &#123;...&#125; <span class="comment">// 0x61、0xCC、0x8C</span></span><br><span class="line"><span class="keyword">for</span> <span class="keyword">var</span> <span class="built_in">c</span> <span class="keyword">in</span> s.utf16 &#123;...&#125; <span class="comment">// 0x0061、0x030C</span></span><br></pre></td></tr></table></figure>
+<p>在上面的代码中s是直接以Unicode标量来初始化的，而<code>s.utf8</code>会将其转换成UTF-8的编码方式，随后遍历每一个<strong>编码单元</strong>，UTF-16也与之类似。字符串对象中utf8和utf16这两个属性的类型分别是<code>String.UTF8View</code>和<code>String.UTF16View</code>，它们都是一个集合类型，实现了<code>BidirectionalCollection</code>协议，之所以没实现<code>RandomAccessCollection</code>是因为UTF-8和UTF-16都是变长编码，没办法做到随机索引。</p>
+<p><code>String</code>类型重载了<code>==</code>符号，而且在比较的时候会自动将字符串正规化后再进行比较：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> s1 = <span class="string">"\u&#123;0061&#125;\u&#123;030C&#125;"</span> <span class="comment">// ǎ</span></span><br><span class="line"><span class="keyword">let</span> s2 = <span class="string">"\u&#123;01CE&#125;"</span> <span class="comment">// ǎ</span></span><br><span class="line"></span><br><span class="line">s1 == s2 <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<p>在这一点上</p>
+<h3 id="Character"><a href="#Character" class="headerlink" title="Character"></a>Character</h3><p>一个字符串是多个字符组成的序列，Swift中表示单个字符的类型是<code>Character</code>。Character表示的是一个Unicode的<strong>字位簇</strong>，也就是说一个Character中可以包含多个Unicode编码点：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> s = <span class="string">"👨‍👩‍👧‍👧abc"</span></span><br><span class="line">s.first <span class="comment">// 👨‍👩‍👧‍👧</span></span><br></pre></td></tr></table></figure>
+<p>可以看到像上面这种带组合字符的情况在Character中能够被正确的处理，<code>s.first</code>获取到的第一个字符是👨‍👩‍👧‍👧（而不是👨）。</p>
+<p>Character中提供了<code>unicodeScalars</code>属性用来访问字位簇中的每一个Unicode编码点，每个编码点通过<code>Unicode.Scalar</code>类型来表示：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="built_in">c</span> = <span class="string">"👨‍👩‍👧‍👧"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">c</span>.unicodeScalars.<span class="built_in">count</span> <span class="comment">// 7</span></span><br><span class="line"><span class="built_in">c</span>.unicodeScalars.first?.value <span class="comment">// 0x1F468 (Unicode编码点)</span></span><br><span class="line"><span class="built_in">c</span>.unicodeScalars.first?.utf16 <span class="comment">// 0xD83D、0xDC68</span></span><br></pre></td></tr></table></figure>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="http://blog.csdn.net/zhuxipan1990/article/details/51602299" target="_blank" rel="noopener">http://blog.csdn.net/zhuxipan1990/article/details/51602299</a></p>
+<p><a href="http://blog.jobbole.com/111261/" target="_blank" rel="noopener">http://blog.jobbole.com/111261/</a></p>
+<p><a href="https://zh.wikipedia.org/wiki/UTF-16" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/UTF-16</a></p>
+<p><a href="https://zh.wikipedia.org/wiki/UTF-8" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/UTF-8</a></p>
+<p><a href="https://objccn.io/issue-9-1/" target="_blank" rel="noopener">https://objccn.io/issue-9-1/</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/13/drafter/" rel="next" title="Drafter - 一个在iOS项目中分析代码结构的工具">
+                <i class="fa fa-chevron-left"></i> Drafter - 一个在iOS项目中分析代码结构的工具
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#在Unicode之前"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x5728;Unicode&#x4E4B;&#x524D;" class="headerlink" title="&#x5728;Unicode&#x4E4B;&#x524D;"></a>&#x5728;Unicode&#x4E4B;&#x524D;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Unicode"><span class="nav-number">2.</span> <span class="nav-text"><a href="#Unicode" class="headerlink" title="Unicode"></a>Unicode</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编码方式"><span class="nav-number">2.1.</span> <span class="nav-text"><a href="#&#x7F16;&#x7801;&#x65B9;&#x5F0F;" class="headerlink" title="&#x7F16;&#x7801;&#x65B9;&#x5F0F;"></a>&#x7F16;&#x7801;&#x65B9;&#x5F0F;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UTF-32："><span class="nav-number">2.1.1.</span> <span class="nav-text"><a href="#UTF-32&#xFF1A;" class="headerlink" title="UTF-32&#xFF1A;"></a>UTF-32&#xFF1A;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UTF-16："><span class="nav-number">2.1.2.</span> <span class="nav-text"><a href="#UTF-16&#xFF1A;" class="headerlink" title="UTF-16&#xFF1A;"></a>UTF-16&#xFF1A;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UTF-8："><span class="nav-number">2.1.3.</span> <span class="nav-text"><a href="#UTF-8&#xFF1A;" class="headerlink" title="UTF-8&#xFF1A;"></a>UTF-8&#xFF1A;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字节序"><span class="nav-number">2.2.</span> <span class="nav-text"><a href="#&#x5B57;&#x8282;&#x5E8F;" class="headerlink" title="&#x5B57;&#x8282;&#x5E8F;"></a>&#x5B57;&#x8282;&#x5E8F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组合字符"><span class="nav-number">2.3.</span> <span class="nav-text"><a href="#&#x7EC4;&#x5408;&#x5B57;&#x7B26;" class="headerlink" title="&#x7EC4;&#x5408;&#x5B57;&#x7B26;"></a>&#x7EC4;&#x5408;&#x5B57;&#x7B26;</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实际应用"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x5B9E;&#x9645;&#x5E94;&#x7528;" class="headerlink" title="&#x5B9E;&#x9645;&#x5E94;&#x7528;"></a>&#x5B9E;&#x9645;&#x5E94;&#x7528;</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JavaScript"><span class="nav-number">3.1.</span> <span class="nav-text"><a href="#JavaScript" class="headerlink" title="JavaScript"></a>JavaScript</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Objective-C"><span class="nav-number">3.2.</span> <span class="nav-text"><a href="#Objective-C" class="headerlink" title="Objective-C"></a>Objective-C</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Swift"><span class="nav-number">3.3.</span> <span class="nav-text"><a href="#Swift" class="headerlink" title="Swift"></a>Swift</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#String"><span class="nav-number">3.3.1.</span> <span class="nav-text"><a href="#String" class="headerlink" title="String"></a>String</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Character"><span class="nav-number">3.3.2.</span> <span class="nav-text"><a href="#Character" class="headerlink" title="Character"></a>Character</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text"><a href="#&#x53C2;&#x8003;&#x8D44;&#x6599;" class="headerlink" title="&#x53C2;&#x8003;&#x8D44;&#x6599;"></a>&#x53C2;&#x8003;&#x8D44;&#x6599;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
